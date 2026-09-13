@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Gym & Fitness Assistant</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chatbot_style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-dumbbell"></i>
+                <span>FitAI</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="dashboard"><i class="fa-solid fa-house"></i> Dashboard</li>
+                <li data-target="ai-trainer"><i class="fa-solid fa-video"></i> AI Trainer</li>
+                <li data-target="dietician"><i class="fa-solid fa-apple-whole"></i> AI Dietician</li>
+                <li data-target="analytics"><i class="fa-solid fa-chart-line"></i> Analytics</li>
+                <li data-target="chatbot"><i class="fa-solid fa-comments"></i> Virtual Buddy</li>
+                <li data-target="profile"><i class="fa-solid fa-user"></i> Profile</li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1>Welcome back, <span id="user-name" class="highlight">Athlete</span></h1>
+                    <div id="user-selector" style="margin-top: 10px;">
+                        <label for="user-dropdown" style="font-size: 0.9rem; color: #94a3b8;">Switch User:</label>
+                        <select id="user-dropdown" style="padding: 8px 12px; border-radius: 6px; background: rgba(30, 41, 59, 0.6); color: #f8fafc; border: 1px solid #475569; cursor: pointer;">
+                            <option value="athlete">Athlete</option>
+                            <option value="fitness_enthusiast">Fitness Enthusiast</option>
+                            <option value="beginner">Beginner</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <img id="user-avatar" src="https://ui-avatars.com/api/?name=Athlete&background=0D8ABC&color=fff" alt="User Profile">
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div class="views">
+                
+                <!-- Dashboard View -->
+                <section id="dashboard" class="view active-view">
+                    <div class="stats-grid">
+                        <div class="stat-card glass">
+                            <div class="stat-icon"><i class="fa-solid fa-fire"></i></div>
+                            <div class="stat-info">
+                                <h3>Calories Burned</h3>
+                                <p id="stat-calories">1,240 kcal</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                            <div class="stat-info">
+                                <h3>Workout Time</h3>
+                                <p id="stat-hours">4h 20m</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                            <div class="stat-info">
+                                <h3>Avg Heart Rate</h3>
+                                <p id="stat-heart-rate">110 bpm</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-icon"><i class="fa-solid fa-bolt"></i></div>
+                            <div class="stat-info">
+                                <h3>Performance Score</h3>
+                                <p id="stat-score">92/100</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-widgets">
+                        <div class="widget glass ai-recommendation">
+                            <h2><i class="fa-solid fa-brain"></i> AI Habit Predictor</h2>
+                            <p class="prediction" id="habit-prediction">You have a <span class="highlight-danger">65% chance</span> of skipping tomorrow's leg day based on your past patterns.</p>
+                            <button class="btn-primary">Commit to Workout</button>
+                        </div>
+                        <div class="widget glass">
+                            <h2>Smart Gym IoT Status</h2>
+                            <ul class="iot-list" id="iot-status-list">
+                                <li>Treadmill 1 <span class="status online">Online</span></li>
+                                <li>Smart Dumbbells <span class="status online">Synced</span></li>
+                                <li>Heart Rate Monitor <span class="status offline">Offline</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- User Info & Goals -->
+                    <div class="dashboard-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                        <div class="widget glass">
+                            <h2><i class="fa-solid fa-target"></i> Your Goals</h2>
+                            <ul id="user-goals" style="list-style: none; padding: 0;">
+                                <li style="padding: 0.5rem 0;"><i class="fa-solid fa-check" style="color: #10b981; margin-right: 0.5rem;"></i> Build Muscle</li>
+                                <li style="padding: 0.5rem 0;"><i class="fa-solid fa-check" style="color: #10b981; margin-right: 0.5rem;"></i> Improve Endurance</li>
+                            </ul>
+                        </div>
+                        <div class="widget glass">
+                            <h2><i class="fa-solid fa-medal"></i> Personal Best</h2>
+                            <p id="personal-best" style="font-size: 1.1rem; color: #f8fafc; margin-top: 0.5rem;">Deadlift: 200kg</p>
+                            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.5rem;">Workouts this week: <span id="workouts-count">5</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Fitness Level & Info -->
+                    <div class="dashboard-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                        <div class="stat-card glass">
+                            <div class="stat-icon"><i class="fa-solid fa-dumbbell"></i></div>
+                            <div class="stat-info">
+                                <h3>Fitness Level</h3>
+                                <p id="fitness-level">Intermediate</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-icon"><i class="fa-solid fa-calendar"></i></div>
+                            <div class="stat-info">
+                                <h3>Member Since</h3>
+                                <p id="member-since">Jan 15, 2024</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-icon"><i class="fa-solid fa-envelope"></i></div>
+                            <div class="stat-info">
+                                <h3>Email</h3>
+                                <p id="user-email" style="font-size: 0.9rem;">athlete@fitai.com</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Workouts -->
+                    <div class="widget glass" style="margin-top: 2rem;">
+                        <h2><i class="fa-solid fa-list"></i> Recent Workouts</h2>
+                        <div id="recent-workouts" style="margin-top: 1rem;">
+                            <div style="padding: 1rem; background: rgba(15, 23, 42, 0.5); border-radius: 8px; margin-bottom: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-weight: 600;">Bench Press</span>
+                                    <span style="color: #10b981;">8 reps × 90kg</span>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.5rem;">May 9, 2024</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Trainer View -->
+                <section id="ai-trainer" class="view">
+                    <div class="trainer-container glass">
+                        <div class="video-section">
+                            <div class="video-placeholder" id="video-container">
+                                <i class="fa-solid fa-camera"></i>
+                                <p>Camera Offline</p>
+                                <video id="webcam" autoplay playsinline style="display:none;"></video>
+                                <canvas id="overlay"></canvas>
+                            </div>
+                            <div class="controls">
+                                <button id="start-camera" class="btn-primary"><i class="fa-solid fa-video"></i> Start AI Tracker</button>
+                                <button id="stop-camera" class="btn-danger" style="display:none;"><i class="fa-solid fa-stop"></i> Stop</button>
+                            </div>
+                        </div>
+                        <div class="feedback-section">
+                            <h2>Live AI Feedback</h2>
+                            <div class="feedback-card">
+                                <div class="metric">
+                                    <span class="label">Exercise:</span>
+                                    <span class="value" id="current-exercise">Bicep Curl</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="label">Reps:</span>
+                                    <span class="value highlight-large" id="rep-count">0</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="label">Form Angle:</span>
+                                    <span class="value" id="form-angle">0 deg</span>
+                                </div>
+                            </div>
+                            <div class="ai-message" id="ai-feedback-msg">
+                                Waiting for movement...
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dietician View -->
+                <section id="dietician" class="view">
+                    <div class="diet-container">
+                        <div class="diet-form glass">
+                            <h2>Get AI Diet Plan</h2>
+                            <form id="diet-form">
+                                <div class="form-group">
+                                    <label>Age</label>
+                                    <input type="number" id="age" required value="25">
+                                </div>
+                                <div class="form-group">
+                                    <label>Weight (kg)</label>
+                                    <input type="number" id="weight" required value="75">
+                                </div>
+                                <div class="form-group">
+                                    <label>Height (cm)</label>
+                                    <input type="number" id="height" required value="180">
+                                </div>
+                                <div class="form-group">
+                                    <label>Goal</label>
+                                    <select id="goal">
+                                        <option value="lose_weight">Lose Weight</option>
+                                        <option value="maintain">Maintain</option>
+                                        <option value="gain_muscle">Gain Muscle</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn-primary">Generate Plan</button>
+                            </form>
+                        </div>
+                        <div class="diet-result glass" id="diet-result" style="display:none;">
+                            <h2>Your AI Plan</h2>
+                            <div class="result-grid">
+                                <div class="res-card">
+                                    <h4>BMI</h4>
+                                    <p id="res-bmi">--</p>
+                                    <small id="res-bmi-category">--</small>
+                                </div>
+                                <div class="res-card">
+                                    <h4>Target Calories</h4>
+                                    <p id="res-cal">-- kcal</p>
+                                    <small id="res-maintenance">-- maintenance</small>
+                                </div>
+                            </div>
+                            <div class="macro-grid" aria-label="Recommended macros">
+                                <div class="macro-pill">
+                                    <span>Protein</span>
+                                    <strong id="res-protein">-- g</strong>
+                                </div>
+                                <div class="macro-pill">
+                                    <span>Carbs</span>
+                                    <strong id="res-carbs">-- g</strong>
+                                </div>
+                                <div class="macro-pill">
+                                    <span>Fat</span>
+                                    <strong id="res-fat">-- g</strong>
+                                </div>
+                            </div>
+                            <div class="res-summary">
+                                <h4>Strategy</h4>
+                                <p id="res-plan">--</p>
+                            </div>
+                            <div class="res-grocery">
+                                <h4>Sample Meal Day</h4>
+                                <ul id="res-meal-list"></ul>
+                            </div>
+                            <div class="res-grocery">
+                                <h4>Smart Grocery List</h4>
+                                <ul id="res-grocery-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Virtual Buddy / Chatbot View -->
+                <section id="chatbot" class="view">
+                    <div class="chat-container glass">
+                        <div class="chat-header">
+                            <i class="fa-solid fa-robot"></i>
+                            <h2>Virtual Gym Buddy</h2>
+                            <p>Powered by AI</p>
+                        </div>
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="message bot">
+                                <p>Hey there! I'm your Virtual Gym Buddy. How are you feeling about your workout today?</p>
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" id="chat-input-field" placeholder="Ask about diet, motivation, or workouts...">
+                            <button id="chat-send-btn" class="btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics View -->
+                <section id="analytics" class="view">
+                    <div class="analytics-container">
+                        <div class="analytics-header glass">
+                            <h2>Performance Analytics</h2>
+                            <button id="refresh-analytics" class="btn-primary"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+                        </div>
+                        <div class="chart-container glass" style="position: relative; height:40vh; width:100%; padding: 2rem; margin-top: 2rem;">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Profile Settings View -->
+                <section id="profile" class="view">
+                    <div class="profile-container">
+                        <div class="widget glass">
+                            <h2><i class="fa-solid fa-user-gear"></i> Your Profile Settings</h2>
+                            <form id="profile-form" style="margin-top: 2rem;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                                    <div class="form-group">
+                                        <label>Full Name</label>
+                                        <input type="text" id="profile-name" required placeholder="Enter your name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" id="profile-email" required placeholder="your@email.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Age</label>
+                                        <input type="number" id="profile-age" min="10" max="120" required placeholder="25">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Weight (kg)</label>
+                                        <input type="number" id="profile-weight" min="30" max="300" step="0.1" required placeholder="75">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Height (cm)</label>
+                                        <input type="number" id="profile-height" min="100" max="250" required placeholder="180">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Fitness Level</label>
+                                        <select id="profile-fitness-level" required>
+                                            <option value="">Select Level</option>
+                                            <option value="Beginner">Beginner</option>
+                                            <option value="Intermediate">Intermediate</option>
+                                            <option value="Advanced">Advanced</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="margin-top: 1.5rem;">
+                                    <label>Fitness Goals</label>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                                        <label style="display: flex; align-items: center; cursor: pointer;">
+                                            <input type="checkbox" id="goal-build-muscle" value="Build Muscle" style="margin-right: 0.5rem;">
+                                            Build Muscle
+                                        </label>
+                                        <label style="display: flex; align-items: center; cursor: pointer;">
+                                            <input type="checkbox" id="goal-lose-weight" value="Lose Weight" style="margin-right: 0.5rem;">
+                                            Lose Weight
+                                        </label>
+                                        <label style="display: flex; align-items: center; cursor: pointer;">
+                                            <input type="checkbox" id="goal-endurance" value="Improve Endurance" style="margin-right: 0.5rem;">
+                                            Improve Endurance
+                                        </label>
+                                        <label style="display: flex; align-items: center; cursor: pointer;">
+                                            <input type="checkbox" id="goal-flexibility" value="Increase Flexibility" style="margin-right: 0.5rem;">
+                                            Increase Flexibility
+                                        </label>
+                                        <label style="display: flex; align-items: center; cursor: pointer;">
+                                            <input type="checkbox" id="goal-confidence" value="Build Confidence" style="margin-right: 0.5rem;">
+                                            Build Confidence
+                                        </label>
+                                        <label style="display: flex; align-items: center; cursor: pointer;">
+                                            <input type="checkbox" id="goal-health" value="Get Fit" style="margin-right: 0.5rem;">
+                                            Get Fit
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                    <button type="submit" class="btn-primary"><i class="fa-solid fa-save"></i> Save Profile</button>
+                                    <button type="button" id="profile-cancel-btn" class="btn-danger" style="opacity: 0.7;"><i class="fa-solid fa-times"></i> Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="widget glass" style="margin-top: 2rem;">
+                            <h2><i class="fa-solid fa-info-circle"></i> Profile Information</h2>
+                            <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                <div>
+                                    <p style="color: #94a3b8; font-size: 0.9rem;">Account Created</p>
+                                    <p id="profile-joined" style="font-size: 1.1rem; color: #f8fafc; margin-top: 0.5rem;">--</p>
+                                </div>
+                                <div>
+                                    <p style="color: #94a3b8; font-size: 0.9rem;">Current Status</p>
+                                    <p style="font-size: 1.1rem; color: #10b981; margin-top: 0.5rem;">✓ Active</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+</html>
